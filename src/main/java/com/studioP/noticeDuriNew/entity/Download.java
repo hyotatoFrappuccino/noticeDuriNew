@@ -8,26 +8,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification {
+public class Download {
 
     @Id
     @GeneratedValue
-    @Column(name = "notification_id")
+    @Column(name = "department_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    private String content;
+    private String fileName;
 
-//    private ? reference_id;
-
-    public Notification(String content, String title, User user) {
-        this.content = content;
-        this.title = title;
-        this.user = user;
-    }
+    private String filePath;
 }
