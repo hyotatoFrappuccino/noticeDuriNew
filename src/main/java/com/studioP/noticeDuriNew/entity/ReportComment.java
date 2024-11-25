@@ -13,7 +13,7 @@ public class ReportComment {
 
     @Id
     @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "report_comment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

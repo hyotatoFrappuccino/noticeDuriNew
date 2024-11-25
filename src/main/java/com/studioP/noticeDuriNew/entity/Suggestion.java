@@ -12,7 +12,7 @@ public class Suggestion {
 
     @Id
     @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "suggestion_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
