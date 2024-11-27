@@ -27,6 +27,9 @@ public class User {
     @Column(name = "kakao_id")
     private Long kakaoId;
 
+    @Column(name = "login_id")
+    private String loginId;
+
     @Column(name = "user_name")
     private String username;
 
