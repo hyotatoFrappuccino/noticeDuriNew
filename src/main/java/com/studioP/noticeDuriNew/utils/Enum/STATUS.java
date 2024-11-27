@@ -1,4 +1,4 @@
-package com.studioP.noticeDuriNew.Enum;
+package com.studioP.noticeDuriNew.utils.Enum;
 
 public enum STATUS {
     RECEIVED,    // 접수 완료

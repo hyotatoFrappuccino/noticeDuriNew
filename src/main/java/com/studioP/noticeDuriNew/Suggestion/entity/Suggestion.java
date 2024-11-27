@@ -1,6 +1,6 @@
 package com.studioP.noticeDuriNew.Suggestion.entity;
 
-import com.studioP.noticeDuriNew.Enum.STATUS;
+import com.studioP.noticeDuriNew.utils.Enum.STATUS;
 import com.studioP.noticeDuriNew.User.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

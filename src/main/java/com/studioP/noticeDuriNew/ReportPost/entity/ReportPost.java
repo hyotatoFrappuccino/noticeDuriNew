@@ -1,7 +1,7 @@
 package com.studioP.noticeDuriNew.ReportPost.entity;
 
 import com.studioP.noticeDuriNew.Post.entity.Post;
-import com.studioP.noticeDuriNew.Enum.STATUS;
+import com.studioP.noticeDuriNew.utils.Enum.STATUS;
 import com.studioP.noticeDuriNew.User.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

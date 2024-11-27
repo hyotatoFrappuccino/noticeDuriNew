@@ -1,7 +1,7 @@
 package com.studioP.noticeDuriNew.User.entity;
 
 import com.studioP.noticeDuriNew.Department.entity.Department;
-import com.studioP.noticeDuriNew.Enum.Role;
+import com.studioP.noticeDuriNew.utils.Enum.Role;
 import com.studioP.noticeDuriNew.Notification.entity.Notification;
 import com.studioP.noticeDuriNew.Suggestion.entity.Suggestion;
 import jakarta.persistence.*;
