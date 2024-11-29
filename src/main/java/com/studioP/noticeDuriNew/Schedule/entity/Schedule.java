@@ -23,15 +23,16 @@ public class Schedule {
     @JoinColumn(name = "campus_id")
     private Campus campus;
 
-    private LocalDateTime date;
+    @Column(name = "upload_date")
+    private LocalDateTime uploadDate;
 
     private String title;
 
     private String description;
 
-    public Schedule(Campus campus, LocalDateTime date, String title, String description) {
+    public Schedule(Campus campus, LocalDateTime uploadDate, String title, String description) {
         this.campus = campus;
-        this.date = date;
+        this.uploadDate = uploadDate;
         this.title = title;
         this.description = description;
     }

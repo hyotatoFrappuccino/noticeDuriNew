@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: noticeDuriNew
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.OracleDialect
+    show-sql: true
