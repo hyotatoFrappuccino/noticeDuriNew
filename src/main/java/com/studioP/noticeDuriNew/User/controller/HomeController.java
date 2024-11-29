@@ -19,13 +19,13 @@ public class HomeController {
 
     private final UserService userService;
 
-    @GetMapping("/members/login")
+    @GetMapping("/users/login")
     public String login(Model model) {
         model.addAttribute("form", new LoginForm());
-        return "members/login";
+        return "users/login";
     }
 
-    @PostMapping("/members/login")
+    @PostMapping("/users/login")
     public String login(@Valid @ModelAttribute("form") LoginForm form, HttpServletRequest request) {
         User user = userService.login(form.getLoginId(), form.getPassword());
         HttpSession session = request.getSession();
