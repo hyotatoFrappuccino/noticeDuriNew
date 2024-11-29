@@ -1,9 +1,10 @@
 package com.studioP.noticeDuriNew.User.service;
 
 import com.studioP.noticeDuriNew.Department.repository.DepartmentRepository;
-import com.studioP.noticeDuriNew.User.entity.RegisterForm;
+import com.studioP.noticeDuriNew.User.entity.dto.RegisterForm;
 import com.studioP.noticeDuriNew.User.entity.User;
 import com.studioP.noticeDuriNew.User.exception.ExistsLoginId;
+import com.studioP.noticeDuriNew.User.exception.KakaoAccountNotFoundException;
 import com.studioP.noticeDuriNew.User.exception.LoginFailedException;
 import com.studioP.noticeDuriNew.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,8 @@ public class UserService {
 
     @Transactional
     public User register(RegisterForm form) {
-        User user = new User(form.getLoginId(), form.getName(), form.getPassword(), form.getEmail(), null);
+        User user = new User(form.getLoginId(), form.getName(), form.getPassword(), form.getKakaoId(), form.getEmail(), null);
+
         if (userRepository.existsByLoginId(user.getLoginId())) {
             throw new ExistsLoginId("이미 존재하는 아이디입니다.", form);
         }
@@ -39,6 +41,10 @@ public class UserService {
 
     public Boolean existsLoginId(String loginId) {
         return userRepository.existsByLoginId(loginId);
+    }
+
+    public User findByKakaoId(Long kakaoId) {
+        return userRepository.findByKakaoId(kakaoId).orElseThrow(KakaoAccountNotFoundException::new);
     }
 
 }

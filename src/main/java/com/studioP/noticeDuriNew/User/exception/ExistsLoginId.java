@@ -1,6 +1,6 @@
 package com.studioP.noticeDuriNew.User.exception;
 
-import com.studioP.noticeDuriNew.User.entity.RegisterForm;
+import com.studioP.noticeDuriNew.User.entity.dto.RegisterForm;
 import lombok.Getter;
 
 @Getter

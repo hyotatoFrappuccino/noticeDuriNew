@@ -1,4 +1,4 @@
-package com.studioP.noticeDuriNew.User.entity;
+package com.studioP.noticeDuriNew.User.entity.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,7 +12,6 @@ public class RegisterForm {
     @NotEmpty
     private String loginId;
 
-    @NotEmpty
     private String password;
 
     @NotEmpty
@@ -21,6 +20,8 @@ public class RegisterForm {
     @NotEmpty
     @Email
     private String email;
+
+    private Long kakaoId;
 
 //    @NotEmpty
 //    private Campus campus;

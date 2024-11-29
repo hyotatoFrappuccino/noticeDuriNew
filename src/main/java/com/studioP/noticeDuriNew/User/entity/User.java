@@ -62,10 +62,11 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Suggestion> suggestionList = new ArrayList<>();
 
-    public User(String loginId, String username, String password, String email, Department department) {
+    public User(String loginId, String username, String password, Long kakaoId, String email, Department department) {
         this.loginId = loginId;
         this.username = username;
         this.password = password;
+        this.kakaoId = kakaoId;
         this.email = email;
         this.role = Role.USER;
         this.department = department;

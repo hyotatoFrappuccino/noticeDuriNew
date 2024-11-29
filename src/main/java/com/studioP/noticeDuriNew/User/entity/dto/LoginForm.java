@@ -1,4 +1,4 @@
-package com.studioP.noticeDuriNew.User.entity;
+package com.studioP.noticeDuriNew.User.entity.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

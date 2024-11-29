@@ -1,7 +1,7 @@
 package com.studioP.noticeDuriNew.User.controller;
 
-import com.studioP.noticeDuriNew.User.entity.LoginForm;
-import com.studioP.noticeDuriNew.User.entity.RegisterForm;
+import com.studioP.noticeDuriNew.User.entity.dto.LoginForm;
+import com.studioP.noticeDuriNew.User.entity.dto.RegisterForm;
 import com.studioP.noticeDuriNew.User.entity.User;
 import com.studioP.noticeDuriNew.User.service.UserService;
 import com.studioP.noticeDuriNew.utils.Const.SessionConst;
@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +23,16 @@ public class UserController {
 
     private final UserService userService;
 
+    @Value("${kakao.client_id}")
+    private String client_id;
+
+    @Value("${kakao.redirect_uri}")
+    private String redirect_uri;
+
     @GetMapping("/users/login")
     public String login(Model model) {
         model.addAttribute("form", new LoginForm());
+        model.addAttribute("kakaoLoginLocation", "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id + "&redirect_uri=" + redirect_uri);
         return "users/login";
     }
 
@@ -38,10 +46,14 @@ public class UserController {
 
     @GetMapping("/users/register")
     public String register(@ModelAttribute("form") RegisterForm form) {
+        //todo 학과 선택 (Department)
+//            List<University> universities = universityService.findAllByOrderByNameAsc();
+//
+//            model.addAttribute("universities", universities);
         return "users/register";
     }
 
-    @PostMapping("/users/register")
+    @PostMapping(value = {"/users/register", "/users/callback"})
     public String register(@Valid @ModelAttribute("form") RegisterForm form, HttpServletRequest request) {
         User user = userService.register(form);
         HttpSession session = request.getSession();
