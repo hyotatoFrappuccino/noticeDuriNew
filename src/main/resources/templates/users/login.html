@@ -130,6 +130,26 @@
                 height: 48px;
             }
         }
+
+        .footer-text {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .footer-text a {
+            color: #228be6;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 8px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-text a:hover {
+            color: #1c7ed6;
+        }
+
     </style>
 </head>
 <body>
@@ -156,8 +176,8 @@
         </a>
 
         <div class="footer-text">
-            <a href="#" th:href="@{/users/register}">회원 가입</a>
-<!--            <a href="#" th:href="@{/users/register}">비밀번호 찾기</a>-->
+            <a href="#" th:href="@{/users/register}">회원가입</a>
+            <a href="#" th:href="@{/users/findAccount}">아이디/비밀번호 찾기</a>
         </div>
 
         <div th:if="${loginFail}" class="error-message" style="color: red; font-weight: bold;">

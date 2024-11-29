@@ -71,4 +71,8 @@ public class User {
         this.role = Role.USER;
         this.department = department;
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }

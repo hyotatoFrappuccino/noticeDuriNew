@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -39,6 +42,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public List<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public Boolean existsLoginId(String loginId) {
         return userRepository.existsByLoginId(loginId);
     }
@@ -47,4 +54,7 @@ public class UserService {
         return userRepository.findByKakaoId(kakaoId).orElseThrow(KakaoAccountNotFoundException::new);
     }
 
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId).orElseThrow(NoSuchElementException::new);
+    }
 }
