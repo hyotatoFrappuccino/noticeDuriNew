@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알려두리 - 회원가입</title>
+    <style>
+        /* 동일한 스타일 복사 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #191919;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 380px;
+            padding: 40px 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: -0.5px;
+            color: #191919;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input, select {
+            width: 100%;
+            height: 50px;
+            padding: 0 16px 0 46px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #228be6;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(34, 139, 230, 0.1);
+        }
+
+        input::placeholder {
+            color: #adb5bd;
+            font-weight: 400;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        button {
+            height: 50px;
+            background-color: #228be6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 4px;
+        }
+
+        button:hover {
+            background-color: #1c7ed6;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-color: white;
+            }
+
+            .register-container {
+                padding: 24px 20px;
+                box-shadow: none;
+            }
+
+            input, select, button {
+                height: 48px;
+            }
+        }
+
+        .feedback-message {
+            font-size: 13px;
+            margin-top: 8px;
+            color: #e03131; /* 기본적으로 오류 색 */
+        }
+
+        .feedback-message.valid {
+            color: #37b24d; /* 유효한 경우 녹색 */
+        }
+
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+            position: absolute;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            width: calc(100% - 46px); /* 아이콘 및 패딩 고려 */
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        .suggestions-list li {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #191919;
+        }
+
+        .suggestions-list li:hover {
+            background: #f1f3f5;
+        }
+
+        .suggestions-list li.active {
+            background: #e7f5ff; /* 활성화된 항목 배경 */
+            color: #1c7ed6; /* 활성화된 항목 텍스트 색상 */
+        }
+    </style>
+
+<!--    로그인 아이디 검증-->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loginIdInput = document.getElementById("loginId");
+            const feedbackMessage = document.getElementById("loginIdFeedback");
+
+            loginIdInput.addEventListener("blur", () => {
+                const loginId = loginIdInput.value.trim();
+                if (!loginId) {
+                    feedbackMessage.textContent = "아이디를 입력해주세요.";
+                    feedbackMessage.classList.remove("valid");
+                    return;
+                }
+
+                // 서버에 요청 보내기
+                fetch(`/users/existsLoginId?loginId=${encodeURIComponent(loginId)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("서버 응답 오류");
+                        }
+                        return response.json();
+                    })
+                    .then(isExists => {
+                        if (isExists) {
+                            feedbackMessage.textContent = "이미 사용 중인 아이디입니다.";
+                            feedbackMessage.classList.remove("valid");
+                        } else {
+                            feedbackMessage.textContent = "사용 가능한 아이디입니다.";
+                            feedbackMessage.classList.add("valid");
+                        }
+                    })
+                    .catch(error => {
+                        feedbackMessage.textContent = "아이디 확인 중 문제가 발생했습니다.";
+                        feedbackMessage.classList.remove("valid");
+                        console.error(error);
+                    });
+            });
+        });
+    </script>
+
+<!--    이메일 추천-->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const emailInput = document.getElementById("email");
+            const suggestionsList = document.getElementById("emailSuggestions");
+
+            const domains = [
+                "@naver.com",
+                "@daum.net",
+                "@hanmail.net",
+                "@kakao.com",
+                "@gmail.com",
+                "@nate.com",
+                "@outlook.com"
+            ];
+
+            let activeIndex = -1; // 현재 활성화된 항목의 인덱스
+
+            emailInput.addEventListener("input", () => {
+                const inputValue = emailInput.value.trim();
+                const [localPart, domainPart] = inputValue.split("@");
+
+                // 전체 목록 보여주기
+                const filteredDomains = domainPart
+                    ? domains.filter(domain => domain.includes(domainPart)) // 필터링
+                    : domains; // 도메인 전체 목록
+
+                activeIndex = -1; // 입력 시 활성화된 항목 초기화
+                renderSuggestions(filteredDomains, localPart || ""); // localPart가 없으면 빈 문자열 전달
+            });
+
+            emailInput.addEventListener("keydown", (event) => {
+                const items = suggestionsList.querySelectorAll("li");
+
+                if (event.key === "ArrowDown") {
+                    // 아래 방향키
+                    activeIndex = (activeIndex + 1) % items.length;
+                    updateActiveItem(items);
+                    event.preventDefault();
+                } else if (event.key === "ArrowUp") {
+                    // 위 방향키
+                    activeIndex = (activeIndex - 1 + items.length) % items.length;
+                    updateActiveItem(items);
+                    event.preventDefault();
+                } else if (event.key === "Enter") {
+                    // Enter 키
+                    if (activeIndex >= 0 && items[activeIndex]) {
+                        emailInput.value = items[activeIndex].textContent;
+                        suggestionsList.style.display = "none";
+                        event.preventDefault();
+                    }
+                }
+            });
+
+            const renderSuggestions = (filteredDomains, localPart) => {
+                if (filteredDomains.length === 0) {
+                    suggestionsList.style.display = "none";
+                    return;
+                }
+
+                suggestionsList.innerHTML = "";
+                filteredDomains.forEach((domain, index) => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${localPart}${domain}`;
+                    listItem.addEventListener("click", () => {
+                        emailInput.value = listItem.textContent;
+                        suggestionsList.style.display = "none";
+                    });
+                    suggestionsList.appendChild(listItem);
+                });
+
+                suggestionsList.style.display = "block";
+            };
+
+            const updateActiveItem = (items) => {
+                items.forEach((item, index) => {
+                    if (index === activeIndex) {
+                        item.classList.add("active");
+                        item.scrollIntoView({block: "nearest"});
+                    } else {
+                        item.classList.remove("active");
+                    }
+                });
+            };
+
+            // 포커스를 잃으면 추천 숨김
+            emailInput.addEventListener("blur", () => {
+                setTimeout(() => {
+                    suggestionsList.style.display = "none";
+                }, 200); // 클릭 이벤트 후 숨김
+            });
+        });
+    </script>
+
+
+</head>
+<body>
+<div class="register-container">
+    <h1>알려두리 회원가입</h1>
+    <form th:action="@{/users/register}" method="post" th:object="${form}">
+        <div class="input-container">
+            <i class="fas fa-user"></i>
+            <label>
+                <input type="text" th:field="*{loginId}" placeholder="아이디" id="loginId" required>
+            </label>
+            <div id="loginIdFeedback" class="feedback-message"></div>
+        </div>
+
+        <div class="input-container">
+            <i class="fas fa-lock"></i>
+            <label>
+                <input type="password" th:field="*{password}" placeholder="비밀번호" required>
+            </label>
+        </div>
+        <div class="input-container">
+            <i class="fas fa-user-circle"></i>
+            <label>
+                <input type="text" th:field="*{name}" placeholder="이름" required>
+            </label>
+        </div>
+        <div class="input-container">
+            <i class="fas fa-envelope"></i>
+            <label>
+                <input type="email" th:field="*{email}" id="email" placeholder="이메일" autocomplete="off" required>
+            </label>
+            <ul id="emailSuggestions" class="suggestions-list"></ul>
+        </div>
+
+
+        <!--        <div class="input-container">-->
+<!--            <i class="fas fa-building"></i>-->
+<!--            <label>-->
+<!--                <select th:field="*{campus}" required>-->
+<!--                    <option value="" disabled selected>캠퍼스 선택</option>-->
+<!--                    <option value="서울">서울</option>-->
+<!--                    <option value="부산">부산</option>-->
+<!--                    <option value="대구">대구</option>-->
+<!--                </select>-->
+<!--            </label>-->
+<!--        </div>-->
+<!--        <div class="input-container">-->
+<!--            <i class="fas fa-book"></i>-->
+<!--            <label>-->
+<!--                <select th:field="*{department}" required>-->
+<!--                    <option value="" disabled selected>학과 선택</option>-->
+<!--                    <option value="컴퓨터공학">컴퓨터공학</option>-->
+<!--                    <option value="경영학">경영학</option>-->
+<!--                    <option value="디자인">디자인</option>-->
+<!--                </select>-->
+<!--            </label>-->
+<!--        </div>-->
+
+        <div th:if="${existsLoginId}" class="error-message" style="color: red; font-weight: bold;">
+            <p th:text="${existsLoginId}"></p>
+        </div>
+        <button type="submit">회원가입</button>
+    </form>
+</div>
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>
