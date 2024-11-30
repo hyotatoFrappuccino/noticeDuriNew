@@ -147,123 +147,129 @@
 </head>
 <body>
 <div class="find-account-container">
-    <h1>계정 찾기</h1>
     <div class="menu">
         <a id="findIdTab" class="active" href="javascript:void(0);" onclick="showTab('findIdFormContainer')">아이디 찾기</a>
         <a id="findPasswordTab" href="javascript:void(0);" onclick="showTab('findPasswordFormContainer')">비밀번호 찾기</a>
     </div>
     <div id="findIdFormContainer" class="form-container active">
-        <form id="findIdForm" method="get" onsubmit="findId(event)">
+        <form id="findIdForm" onsubmit="findId(event)">
             <div class="input-container">
                 <label>
                     <input type="email" id="email" name="email" placeholder="가입된 이메일" required>
                 </label>
             </div>
-            <button type="button" onclick="findId(event)">아이디 찾기</button>
-
+            <button type="submit">아이디 찾기</button>
         </form>
     </div>
     <div id="findPasswordFormContainer" class="form-container">
-        <form id="findPasswordForm" method="get" onsubmit="findPassword(event)">
+        <form id="findPasswordForm" onsubmit="findPassword(event)">
             <div class="input-container">
                 <label>
-                    <input type="text" name="loginId" placeholder="가입된 아이디" required>
+                    <input type="text" id="loginId" name="loginId" placeholder="가입된 아이디" required>
                 </label>
             </div>
             <button type="submit">비밀번호 찾기</button>
         </form>
     </div>
 
-    <!-- 아이디 목록 표시 -->
+    <!-- 결과 표시 -->
     <div class="result-container" id="resultContainer" style="display:none;">
-        <h2>가입된 아이디 목록</h2>
-        <ul id="loginIdList"></ul>
-        <p id="noIdsMessage" style="display:none;">가입된 아이디 없음</p>
+        <h2 id="resultTitle">가입된 아이디</h2>
+        <ul id="resultList" style="display:none;"></ul>
+        <p id="noResultMessage" style="display:none;">결과 없음</p>
     </div>
-
 </div>
 
 <script>
     function showTab(tabId) {
-        // 모든 폼 숨기기
         document.querySelectorAll('.form-container').forEach(form => form.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
-
-        // 메뉴의 활성화된 탭 변경
         document.querySelectorAll('.menu a').forEach(link => link.classList.remove('active'));
         document.getElementById(tabId === 'findIdFormContainer' ? 'findIdTab' : 'findPasswordTab').classList.add('active');
 
-        // 비밀번호 찾기 탭일 경우 아이디 목록 숨기기
-        if (tabId === 'findPasswordFormContainer') {
-            const resultContainer = document.getElementById("resultContainer");
-            resultContainer.style.display = 'none'; // 결과 영역 숨기기
-        }
+        document.getElementById("resultContainer").style.display = 'none'; // 결과 숨김
     }
 
     async function findId(event) {
         event.preventDefault();
         const email = document.getElementById("email").value;
 
-        const response = await fetch("/users/findId", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({email: email})
-        });
+        try {
+            const response = await fetch(`/users/findId?email=${encodeURIComponent(email)}`, {
+                method: "GET"
+            });
 
-        if (response.ok) {
-            const loginIds = await response.json();
             const resultContainer = document.getElementById("resultContainer");
-            const loginIdList = document.getElementById("loginIdList");
-            const noIdsMessage = document.getElementById("noIdsMessage");
+            const resultList = document.getElementById("resultList");
+            const noResultMessage = document.getElementById("noResultMessage");
 
-            // 이전 결과들 초기화
-            loginIdList.innerHTML = '';
-            noIdsMessage.style.display = 'none';
+            resultList.innerHTML = '';
+            noResultMessage.style.display = 'none';
 
-            if (loginIds.length > 0) {
-                // 로그인 아이디 목록 표시
-                loginIds.forEach(id => {
-                    const li = document.createElement('li');
-                    li.textContent = id;
-                    loginIdList.appendChild(li);
-                });
-                resultContainer.style.display = 'block'; // 결과 영역 보이기
+            if (response.ok) {
+                const loginIds = await response.json();
+                resultTitle.textContent = '가입된 아이디 목록';
+                if (loginIds.length > 0) {
+                    loginIds.forEach(id => {
+                        const li = document.createElement('li');
+                        li.textContent = id;
+                        resultList.appendChild(li);
+                    });
+                    resultList.style.display = 'block';
+                } else {
+                    noResultMessage.textContent = '가입된 아이디 없음';
+                    noResultMessage.style.display = 'block';
+                }
             } else {
-                // 아이디 없음 메시지 표시
-                noIdsMessage.style.display = 'block';
-                resultContainer.style.display = 'block'; // 결과 영역 보이기
+                noResultMessage.textContent = '요청 실패';
+                noResultMessage.style.display = 'block';
             }
-        } else {
-            alert("아이디를 찾을 수 없습니다.");
+
+            resultContainer.style.display = 'block';
+        } catch (error) {
+            alert("요청 중 오류가 발생했습니다.");
         }
     }
 
     async function findPassword(event) {
         event.preventDefault();
-        const loginId = document.getElementById("findPasswordForm").loginId.value;
+        const loginId = document.getElementById("loginId").value;
 
-        // 비밀번호 찾기 시 아이디 목록을 숨김
-        const resultContainer = document.getElementById("resultContainer");
-        resultContainer.style.display = 'none'; // 결과 영역 숨기기
+        try {
+            const response = await fetch(`/users/findPassword?loginId=${encodeURIComponent(loginId)}`, {
+                method: "GET"
+            });
 
-        const response = await fetch(`/users/findPassword?loginId=${encodeURIComponent(loginId)}`, {
-            method: "GET",
-        });
+            const resultContainer = document.getElementById("resultContainer");
+            const resultTitle = document.getElementById("resultTitle");
+            const resultList = document.getElementById("resultList");
+            const noResultMessage = document.getElementById("noResultMessage");
 
-        if (response.ok) {
-            const result = await response.json();
-            if (result.success) {
-                alert("비밀번호 찾기 성공");
+            resultList.innerHTML = '';
+            noResultMessage.style.display = 'none';
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.password) {
+                    resultTitle.textContent = '변경된 비밀번호';
+                    const li = document.createElement('li');
+                    li.textContent = result.password;
+                    resultList.appendChild(li);
+                    resultList.style.display = 'block';
+                } else {
+                    noResultMessage.textContent = '해당하는 ID가 없습니다';
+                    noResultMessage.style.display = 'block';
+                }
             } else {
-                alert("비밀번호를 찾을 수 없습니다.");
+                noResultMessage.textContent = '요청 실패';
+                noResultMessage.style.display = 'block';
             }
-        } else {
-            alert("비밀번호를 찾을 수 없습니다.");
+
+            resultContainer.style.display = 'block';
+        } catch (error) {
+            alert("요청 중 오류가 발생했습니다.");
         }
     }
-
 </script>
 </body>
 </html>

@@ -14,9 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "users")
@@ -82,11 +80,14 @@ public class UserController {
 
     @GetMapping("/findPassword")
     @ResponseBody
-    public String findPassword(String loginId) {
+    public Map<String, String> findPassword(String loginId) {
         User user = userService.findByLoginId(loginId);
-        String newPassword = UUID.randomUUID().toString().substring(5);
+        String newPassword = UUID.randomUUID().toString().substring(0, 5);
         user.changePassword(newPassword);
-        return newPassword;
+
+        Map<String, String> response = new HashMap<>();
+        response.put("password", newPassword);
+        return response;
     }
 
     /*========== Utils ==========*/
