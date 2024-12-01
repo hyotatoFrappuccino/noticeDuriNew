@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,39 +21,63 @@ public class UserService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
 
+    @Transactional
     public User login(String loginId, String password) {
-        return userRepository.findByLoginIdAndPassword(loginId, password)
-                .orElseThrow(() -> new LoginFailedException("아이디 또는 비밀번호가 맞지 않습니다."));
+        // 아이디로 사용자 조회
+        User user = getUserByLoginId(loginId);
+
+        // 비밀번호 검증
+        if (!user.getPassword().equals(password)) {
+            /*todo 트랜잭션에서 예외 발생 시 롤백되어 user failedLoginCount update 안되는 문제 */
+            handleFailedLogin(user);
+            throw new LoginFailedException("아이디 또는 비밀번호가 맞지 않습니다.");
+        }
+
+        if (user.isLock()) {
+            throw new LoginFailedException("비밀번호 오류 5회 이상으로 인해 계정이 잠금된 상태입니다. 관리자에게 문의하세요.");
+        }
+
+        // 로그인 성공
+        user.unlock();
+        return user;
     }
 
     @Transactional
     public User register(RegisterForm form) {
         User user = new User(form.getLoginId(), form.getName(), form.getPassword(), form.getKakaoId(), form.getEmail(), null);
 
-        if (userRepository.existsByLoginId(user.getLoginId())) {
+        if (existsByLoginId(user.getLoginId())) {
             throw new ExistsLoginId("이미 존재하는 아이디입니다.", form);
         }
         //todo 존재하지 않는 학과 ID
 /*        if (departmentRepository.existsById(user.getDepartment().getId())) {
-            존재하지 않은 학과ID
             throw new
         }*/
         return userRepository.save(user);
     }
 
-    public List<User> findByEmail(String email) {
+    /*    =========== Utils ===========     */
+
+    @Transactional
+    public void handleFailedLogin(User user) {
+        if (user.increaseFailedLoginCount() >= 5) {
+            user.lock();
+        }
+    }
+
+    public List<User> getUsersByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public Boolean existsLoginId(String loginId) {
+    public boolean existsByLoginId(String loginId) {
         return userRepository.existsByLoginId(loginId);
     }
 
-    public User findByKakaoId(Long kakaoId) {
-        return userRepository.findByKakaoId(kakaoId).orElseThrow(KakaoAccountNotFoundException::new);
+    public User getUserByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId).orElseThrow(() -> new LoginFailedException("아이디 또는 비밀번호가 맞지 않습니다."));
     }
 
-    public User findByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId).orElseThrow(NoSuchElementException::new);
+    public User getUserByKakaoId(Long kakaoId) {
+        return userRepository.findByKakaoId(kakaoId).orElseThrow(KakaoAccountNotFoundException::new);
     }
 }

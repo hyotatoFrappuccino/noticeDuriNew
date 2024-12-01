@@ -75,4 +75,19 @@ public class User {
     public void changePassword(String password) {
         this.password = password;
     }
+
+    public int increaseFailedLoginCount() {
+        return ++this.failedLoginCount;
+    }
+
+    public void lock() {
+        this.isLock = true;
+        this.lockedDate = LocalDateTime.now();
+    }
+
+    public void unlock() {
+        this.failedLoginCount = 0;
+        this.isLock = false;
+        this.lockedDate = null;
+    }
 }

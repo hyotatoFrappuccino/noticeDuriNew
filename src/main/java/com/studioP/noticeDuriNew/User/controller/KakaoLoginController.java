@@ -25,7 +25,7 @@ public class KakaoLoginController {
     private final UserService userService;
 
     @GetMapping("/users/callback")
-    public String callback(@RequestParam("code") String code, Model model, HttpServletRequest request) {
+    public String kakaoLoginCallback(@RequestParam("code") String code, Model model, HttpServletRequest request) {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
         KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
 
@@ -34,7 +34,7 @@ public class KakaoLoginController {
         User loginUser;
 
         try {
-            loginUser = userService.findByKakaoId(kakao_id);
+            loginUser = userService.getUserByKakaoId(kakao_id);
         } catch (KakaoAccountNotFoundException e) {
             // 카카오 계정으로 회원가입
             RegisterForm form = new RegisterForm();

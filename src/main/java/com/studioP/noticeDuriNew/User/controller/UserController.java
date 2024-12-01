@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +70,7 @@ public class UserController {
     @GetMapping("/findId")
     @ResponseBody
     public List<String> findId(String email) {
-        List<User> users = userService.findByEmail(email);
+        List<User> users = userService.getUsersByEmail(email);
         List<String> loginIdList = new ArrayList<>();
         for (User user : users) {
             loginIdList.add(user.getLoginId());
@@ -80,8 +81,9 @@ public class UserController {
 
     @GetMapping("/findPassword")
     @ResponseBody
+    @Transactional
     public Map<String, String> findPassword(String loginId) {
-        User user = userService.findByLoginId(loginId);
+        User user = userService.getUserByLoginId(loginId);
         String newPassword = UUID.randomUUID().toString().substring(0, 5);
         user.changePassword(newPassword);
 
@@ -95,6 +97,6 @@ public class UserController {
     @GetMapping("/existsLoginId")
     @ResponseBody
     public Boolean existsLoginId(String loginId) {
-        return userService.existsLoginId(loginId);
+        return userService.existsByLoginId(loginId);
     }
 }
