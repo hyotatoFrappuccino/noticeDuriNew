@@ -62,12 +62,32 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Suggestion> suggestionList = new ArrayList<>();
 
-    public User(Long kakaoId, String username, String password, String email, Department department) {
-        this.kakaoId = kakaoId;
+    public User(String loginId, String username, String password, Long kakaoId, String email, Department department) {
+        this.loginId = loginId;
         this.username = username;
         this.password = password;
+        this.kakaoId = kakaoId;
         this.email = email;
         this.role = Role.USER;
         this.department = department;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public int increaseFailedLoginCount() {
+        return ++this.failedLoginCount;
+    }
+
+    public void lock() {
+        this.isLock = true;
+        this.lockedDate = LocalDateTime.now();
+    }
+
+    public void unlock() {
+        this.failedLoginCount = 0;
+        this.isLock = false;
+        this.lockedDate = null;
     }
 }

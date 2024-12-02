@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알려두리 - 로그인</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #191919;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 380px;
+            padding: 40px 24px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: -0.5px;
+            color: #191919;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            height: 50px;
+            padding: 0 16px 0 46px;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #228be6;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(34, 139, 230, 0.1);
+        }
+
+        input::placeholder {
+            color: #adb5bd;
+            font-weight: 400;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        button {
+            height: 50px;
+            background-color: #228be6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 4px;
+        }
+
+        button:hover {
+            background-color: #1c7ed6;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .error-message {
+            background-color: #fff5f5;
+            border: 1px solid #ffe3e3;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e03131;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-color: white;
+            }
+
+            .login-container {
+                padding: 24px 20px;
+                box-shadow: none;
+            }
+
+            input, button {
+                height: 48px;
+            }
+        }
+
+        .footer-text {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .footer-text a {
+            color: #228be6;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 8px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-text a:hover {
+            color: #1c7ed6;
+        }
+
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>알려두리 로그인</h1>
+    <form th:action="@{/users/login}" method="post" th:object="${form}">
+        <div class="input-container">
+            <i class="fas fa-user"></i>
+            <label>
+                <input type="text" th:field="*{loginId}" placeholder="아이디" required>
+            </label>
+        </div>
+        <div class="input-container">
+            <i class="fas fa-lock"></i>
+            <label>
+                <input type="password" th:field="*{password}" placeholder="비밀번호" required>
+            </label>
+        </div>
+        <button type="submit">로그인</button>
+
+        <a th:href="${kakaoLoginLocation}">
+            <img src="/kakao_login_large_wide.png" style="width: 100%; height: auto;"
+                 alt="카카오 로그인">
+        </a>
+
+        <div class="footer-text">
+            <a href="#" th:href="@{/users/register}">회원가입</a>
+            <a href="#" th:href="@{/users/findAccount}">아이디/비밀번호 찾기</a>
+        </div>
+
+        <div th:if="${loginFail}" class="error-message" style="color: red; font-weight: bold;">
+            <p th:text="${loginFail}"></p>
+        </div>
+
+
+    </form>
+</div>
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

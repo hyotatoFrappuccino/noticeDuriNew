@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: noticeDuriNew
+  datasource:
+    url: jdbc:oracle:thin:@noticeduri_high?TNS_ADMIN=C:/Users/user/Desktop/Wallet_NoticeDuri
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: admin
+    password: 2024NOTICEDURIS0929!s
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.OracleDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging.level:
+  org.hibernate.SQL: debug
+
+server:
+  port: 8080
+
+kakao:
+  client_id: 003481d0937b60feb487017be2d8ec1a
+  redirect_uri: http://localhost:${server.port}/users/callback
