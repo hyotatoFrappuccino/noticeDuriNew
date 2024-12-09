@@ -5,7 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>알려두리 - 회원가입</title>
     <style>
-        /* 동일한 스타일 복사 */
+        .custom-checkbox label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #495057;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            display: none; /* 기본 체크박스 숨김 */
+        }
+
+        .custom-checkbox .checkmark {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #adb5bd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked + .checkmark {
+            border-color: #228be6;
+            background-color: #228be6;
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked + .checkmark::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 6px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox a {
+            text-decoration: none;
+            color: #228be6;
+        }
+
+        .custom-checkbox a:hover {
+            text-decoration: underline;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -296,6 +345,29 @@
         });
     </script>
 
+<!--    이용약관/개인정보처리방침 미체크시 회원가입 비활성화-->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const termsCheckbox = document.getElementById("termsCheckbox");
+            const privacyCheckbox = document.getElementById("privacyCheckbox");
+            const submitButton = document.querySelector("button[type='submit']");
+
+            const updateButtonState = () => {
+                if (termsCheckbox.checked && privacyCheckbox.checked) {
+                    submitButton.disabled = false;
+                } else {
+                    submitButton.disabled = true;
+                }
+            };
+
+            termsCheckbox.addEventListener("change", updateButtonState);
+            privacyCheckbox.addEventListener("change", updateButtonState);
+
+            // 초기 상태 버튼 비활성화
+            submitButton.disabled = true;
+        });
+    </script>
+
 
 </head>
 <body>
@@ -366,6 +438,22 @@
 
         <!-- kakaoId를 hidden 필드로 전달 -->
         <input type="hidden" th:field="*{kakaoId}" value="${kakaoId}"/>
+
+        <div class="input-container custom-checkbox">
+            <label>
+                <input type="checkbox" id="termsCheckbox" required>
+                <span class="checkmark"></span>
+                <a href="https://docs.google.com/document/d/1fBEUUAr91uic-7kNdzicYpw3V8IUrcsEOrxXUcZHXnY/edit?usp=sharing" target="_blank">이용약관</a>에 동의합니다.
+            </label>
+        </div>
+        <div class="input-container custom-checkbox">
+            <label>
+                <input type="checkbox" id="privacyCheckbox" required>
+                <span class="checkmark"></span>
+                <a href="https://docs.google.com/document/d/1mpfgxqPW9aBwWUPAFTlk0PYjaasO9P3HtWHjzLsY6uk/edit?usp=sharing" target="_blank">개인정보 처리방침</a>에 동의합니다.
+            </label>
+        </div>
+
 
         <button type="submit">회원가입</button>
     </form>
