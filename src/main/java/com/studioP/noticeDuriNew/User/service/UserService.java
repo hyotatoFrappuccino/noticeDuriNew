@@ -44,7 +44,7 @@ public class UserService {
 
     @Transactional
     public User register(RegisterForm form) {
-        User user = new User(form.getLoginId(), form.getName(), form.getPassword(), form.getKakaoId(), form.getEmail(), null);
+        User user = new User(form.getLoginId(), form.getName(), form.getPassword(), form.getKakaoId(), form.getEmail(), null, form.isMarketingReceiveAgree());
 
         if (existsByLoginId(user.getLoginId())) {
             throw new ExistsLoginId("이미 존재하는 아이디입니다.", form);

@@ -56,13 +56,16 @@ public class User {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    @Column(name = "marketing_receive_agree")
+    private boolean marketingReceiveAgree;
+
     @OneToMany(mappedBy = "user")
     private List<Notification> notificationList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Suggestion> suggestionList = new ArrayList<>();
 
-    public User(String loginId, String username, String password, Long kakaoId, String email, Department department) {
+    public User(String loginId, String username, String password, Long kakaoId, String email, Department department, boolean marketingReceiveAgree) {
         this.loginId = loginId;
         this.username = username;
         this.password = password;
@@ -70,6 +73,7 @@ public class User {
         this.email = email;
         this.role = Role.USER;
         this.department = department;
+        this.marketingReceiveAgree = marketingReceiveAgree;
     }
 
     public void changePassword(String password) {

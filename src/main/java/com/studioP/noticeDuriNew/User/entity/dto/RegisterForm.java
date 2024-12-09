@@ -23,6 +23,8 @@ public class RegisterForm {
 
     private Long kakaoId;
 
+    private boolean marketingReceiveAgree;
+
 //    @NotEmpty
 //    private Campus campus;
 //
