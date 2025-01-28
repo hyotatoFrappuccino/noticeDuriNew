@@ -73,8 +73,12 @@ public class UserController {
         List<User> users = userService.getUsersByEmail(email);
         List<String> loginIdList = new ArrayList<>();
         for (User user : users) {
-            loginIdList.add(user.getLoginId());
+            if (user.getKakaoId() == null) {
+                loginIdList.add(user.getLoginId());
+            }
         }
+
+        loginIdList.sort(Comparator.naturalOrder());
 
         return loginIdList;
     }
