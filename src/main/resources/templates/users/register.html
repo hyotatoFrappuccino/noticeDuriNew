@@ -375,6 +375,9 @@
     <h1>알려두리 회원가입</h1>
     <form th:action="@{/users/register}" method="post" th:object="${form}">
 
+        <span th:if="${form.kakaoId != null}" th:utext="${form.email} + '<br>카카오 계정으로 회원가입 중 '"></span>
+
+
         <div class="input-container" th:if="${form.kakaoId == null}">
             <i class="fas fa-user"></i>
             <label>
@@ -400,7 +403,7 @@
             </label>
         </div>
 
-        <div class="input-container">
+        <div class="input-container" th:if="${form.kakaoId == null}">
             <i class="fas fa-envelope"></i>
             <label>
                 <input type="email" th:field="*{email}" id="email" placeholder="이메일" autocomplete="off" required>
@@ -408,6 +411,7 @@
             <ul id="emailSuggestions" class="suggestions-list"></ul>
         </div>
 
+        <input type="hidden" th:if="${form.kakaoId != null}" th:field="*{email}" value="${email}"/>
 
         <!--        <div class="input-container">-->
 <!--            <i class="fas fa-building"></i>-->

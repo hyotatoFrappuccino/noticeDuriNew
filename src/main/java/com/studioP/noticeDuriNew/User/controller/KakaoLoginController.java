@@ -41,6 +41,7 @@ public class KakaoLoginController {
             form.setLoginId(UUID.randomUUID().toString());
             form.setName(userInfo.getKakaoAccount().getProfile().getNickName());
             form.setKakaoId(userInfo.getId());
+            form.setEmail(userInfo.getKakaoAccount().getEmail());
 
             model.addAttribute("form", form);
             return "/users/register";
